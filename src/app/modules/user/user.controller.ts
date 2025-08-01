@@ -4,7 +4,7 @@ import { UserServices } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 
-export const createUser = catchAsync(
+const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserServices.creatUser(req.body);
     sendResponse(res, {
