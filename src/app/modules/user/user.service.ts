@@ -7,4 +7,10 @@ const creatUser = async (payload: Partial<IUser>) => {
   const wallet = await Wallet.create({ owner: user._id });
   return { user, wallet };
 };
-export const UserServices = { creatUser };
+
+const getUsers = async () => {
+  const users = await User.find({});
+  //password response e pass hobe na!!
+  return users;
+};
+export const UserServices = { creatUser, getUsers };

@@ -1,9 +1,15 @@
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { Wallet } from "./wallet.model";
-const addMoney = async (userId: string, amount: number) => {
-  const wallet = await Wallet.findOneAndUpdate(
-    { owner: userId },
+import { Transaction } from "../transaction/transaction.model";
+import {
+  TransactionStatus,
+  TransactionType,
+} from "../transaction/transaction.interface";
+import { TransactionServices } from "../transaction/transaction.service";
+const addMoney = async (walletId: string, amount: number) => {
+  const wallet = await Wallet.findByIdAndUpdate(
+    { _id: walletId },
     { $inc: { balance: amount } },
     { new: true }
   );
@@ -12,9 +18,18 @@ const addMoney = async (userId: string, amount: number) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found");
   }
 
-  return wallet;
+  const transaction = await Transaction.create({
+    fromWallet: wallet._id,
+    toWallet: wallet._id,
+    initiator: wallet.owner,
+    type: TransactionType.ADD,
+    amount: amount,
+    status: TransactionStatus.COMPLETED,
+  });
+
+  return { wallet, transaction };
 };
-const withdrawMoney = async (userId: string, amount: number) => {
+const withdrawMoney = async (walletId: string, amount: number) => {
   if (amount < 0) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -22,7 +37,7 @@ const withdrawMoney = async (userId: string, amount: number) => {
     );
   }
   const wallet = await Wallet.findOneAndUpdate(
-    { owner: userId, balance: { $gte: amount } },
+    { _id: walletId, balance: { $gte: amount } },
     { $inc: { balance: -amount } },
     { new: true }
   );
@@ -33,7 +48,28 @@ const withdrawMoney = async (userId: string, amount: number) => {
       "Wallet not found or insufficient balance"
     );
   }
-  return wallet;
+
+  const transaction = await Transaction.create({
+    fromWallet: wallet._id,
+    toWallet: wallet._id,
+    initiator: wallet.owner,
+    type: TransactionType.WITHDRAW,
+    amount: amount,
+    status: TransactionStatus.COMPLETED,
+  });
+  return { wallet, transaction };
 };
 
-export const WalletServices = { addMoney, withdrawMoney };
+const sendMoneyToUser = async (walletId: string, amount: number) => {
+  const userWallet = Wallet.findByIdAndUpdate(
+    walletId,
+    { $inc: { balance: amount } },
+    { new: true }
+  );
+  if (!userWallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User Wallet not found");
+  }
+  //need logged in user id
+};
+
+export const WalletServices = { addMoney, withdrawMoney, sendMoneyToUser };
