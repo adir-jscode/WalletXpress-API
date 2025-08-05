@@ -11,6 +11,12 @@ interface EnvConfig {
   JWT_ACCESS_EXPIRES: string;
   JWT_REFRESH_SECRET: string;
   JWT_REFRESH_EXPIRES: string;
+  ADMIN_NAME: string;
+  ADMIN_EMAIL: string;
+  ADMIN_PASSWORD: string;
+  ADMIN_PHONE: string;
+  ADMIN_ADDRESS: string;
+  ADMIN_NID: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -23,6 +29,12 @@ const loadEnvVariables = (): EnvConfig => {
     "JWT_ACCESS_EXPIRES",
     "JWT_REFRESH_SECRET",
     "JWT_REFRESH_EXPIRES",
+    "ADMIN_NAME",
+    "ADMIN_EMAIL",
+    "ADMIN_PASSWORD",
+    "ADMIN_PHONE",
+    "ADMIN_ADDRESS",
+    "ADMIN_NID",
   ];
   requiredEnvVariables.forEach((key) => {
     if (!process.env[key]) {
@@ -38,6 +50,12 @@ const loadEnvVariables = (): EnvConfig => {
     JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES as string,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
     JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES as string,
+    ADMIN_NAME: process.env.ADMIN_NAME as string,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL as string,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD as string,
+    ADMIN_PHONE: process.env.ADMIN_PHONE as string,
+    ADMIN_ADDRESS: process.env.ADMIN_ADDRESS as string,
+    ADMIN_NID: process.env.ADMIN_NID as string,
   };
 };
 

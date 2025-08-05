@@ -35,6 +35,7 @@ export const createUserZodSchema = z.object({
   nid: z
     .string({ error: "NID must be string" })
     .max(10, { message: "NID must be at least 10 characters long" }),
+  role: z.enum(Object.values(Role) as [string]).optional(),
 });
 
 export const updateUserZodSchema = z.object({

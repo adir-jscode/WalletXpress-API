@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { ITransaction } from "./transaction.interface";
 import { Transaction } from "./transaction.model";
 
@@ -7,4 +8,9 @@ const createTransaction = async (payload: Partial<ITransaction>) => {
 };
 
 //View transaction history -> logged in user id
-export const TransactionServices = { createTransaction };
+const getTransactionHistory = async (payload: JwtPayload) => {
+  const userId = payload.id;
+  const transactionHistory = await Transaction.find({ initiator: userId });
+  return transactionHistory;
+};
+export const TransactionServices = { createTransaction, getTransactionHistory };

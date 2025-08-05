@@ -20,5 +20,6 @@ router.patch(
   checkAuth(Role.USER),
   WalletControllers.sendMoneyToUser
 );
+router.patch("/cash-in", checkAuth(Role.AGENT), WalletControllers.cashIn);
 
 export const walletRoutes = router;

@@ -55,4 +55,21 @@ const sendMoneyToUser = catchAsync(
   }
 );
 
-export const WalletControllers = { addMoney, withdrawMoney, sendMoneyToUser };
+const cashIn = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { phone, amount } = req.body;
+    const cashIn = WalletServices.cashIn(phone, amount, req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: `$ ${amount} sent successfully`,
+      data: cashIn,
+    });
+  }
+);
+export const WalletControllers = {
+  addMoney,
+  withdrawMoney,
+  sendMoneyToUser,
+  cashIn,
+};

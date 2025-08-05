@@ -104,4 +104,48 @@ const sendMoneyToUser = async (
   return { userWallet, transaction };
 };
 
-export const WalletServices = { addMoney, withdrawMoney, sendMoneyToUser };
+const cashIn = async (
+  phone: string,
+  amount: number,
+  decodedToken: JwtPayload
+) => {
+  const isUserExist = await User.findOne({ phone: phone });
+  console.log(isUserExist);
+  if (!isUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User does not exist");
+  }
+
+  //update user wallet
+  const userWallet = await Wallet.findOneAndUpdate(
+    { owner: isUserExist._id },
+    { $inc: { balance: +amount } },
+    { new: true, runValidators: true }
+  );
+
+  //update agent wallet
+  const agentWallet = await Wallet.findOneAndUpdate(
+    { owner: decodedToken._id },
+    { $inc: { balance: -amount } },
+    { new: true, runValidators: true }
+  );
+
+  const agentWalletId = decodedToken.walletId;
+  //create new transaction
+  const transaction = Transaction.create({
+    fromWallet: agentWalletId,
+    toWallet: isUserExist._id,
+    initiator: decodedToken.id,
+    amount: amount,
+    type: TransactionType.CASH_IN,
+    status: TransactionStatus.COMPLETED,
+  });
+
+  return { userWallet, agentWallet, transaction };
+};
+
+export const WalletServices = {
+  addMoney,
+  withdrawMoney,
+  sendMoneyToUser,
+  cashIn,
+};
