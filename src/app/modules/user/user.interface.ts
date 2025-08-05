@@ -24,8 +24,7 @@ export interface IUser {
   password: string;
   phone: string;
   address: string;
-  nid?: string;
-  passportNumber?: string;
+  nid: string;
   isDeleted?: boolean;
   isActive?: IsActive;
   isVerified?: boolean;

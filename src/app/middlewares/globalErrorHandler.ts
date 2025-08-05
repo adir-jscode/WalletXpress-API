@@ -8,6 +8,9 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  if (envVars.NODE_ENV === "development") {
+    console.log(err);
+  }
   let statusCode = 500;
   let message = `Something went wrong!! ${err.message}`;
 
@@ -21,6 +24,7 @@ export const globalErrorHandler = (
   res.status(statusCode).json({
     success: false,
     message,
+    err,
     stack: envVars.NODE_ENV === "development" ? err.stack : null,
   });
 };

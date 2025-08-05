@@ -34,12 +34,7 @@ export const createUserZodSchema = z.object({
     .max(200, { message: "Address cannot exceed 200 characters." }),
   nid: z
     .string({ error: "NID must be string" })
-    .max(10, { message: "NID must be at least 10 characters long" })
-    .optional(),
-  passportNumber: z
-    .string({ error: "Passport Number must be string" })
-    .min(9, { message: "Passport Number must be at least 9 characters long" })
-    .optional(),
+    .max(10, { message: "NID must be at least 10 characters long" }),
 });
 
 export const updateUserZodSchema = z.object({
@@ -80,12 +75,7 @@ export const updateUserZodSchema = z.object({
     .optional(),
   nid: z
     .string({ error: "NID must be string" })
-    .max(10, { message: "NID must be at least 10 characters long" })
-    .optional(),
-  passportNumber: z
-    .string({ error: "Passport Number must be string" })
-    .min(9, { message: "Passport Number must be at least 9 characters long" })
-    .optional(),
+    .max(10, { message: "NID must be at least 10 characters long" }),
   role: z.enum(Object.values(Role) as [string]).optional(),
   IsActive: z.enum(Object.values(IsActive) as [string]).optional(),
   isDeleted: z.boolean({ error: "isDeleted must be true or false" }).optional(),

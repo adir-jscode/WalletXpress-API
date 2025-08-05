@@ -7,6 +7,8 @@ import {
   TransactionType,
 } from "../transaction/transaction.interface";
 import { TransactionServices } from "../transaction/transaction.service";
+import { JwtPayload } from "jsonwebtoken";
+import { User } from "../user/user.model";
 const addMoney = async (walletId: string, amount: number) => {
   const wallet = await Wallet.findByIdAndUpdate(
     { _id: walletId },
@@ -60,16 +62,46 @@ const withdrawMoney = async (walletId: string, amount: number) => {
   return { wallet, transaction };
 };
 
-const sendMoneyToUser = async (walletId: string, amount: number) => {
-  const userWallet = Wallet.findByIdAndUpdate(
-    walletId,
-    { $inc: { balance: amount } },
+const sendMoneyToUser = async (
+  phone: string,
+  amount: number,
+  decodedToken: JwtPayload
+) => {
+  const user = await User.findOne({ phone });
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid phone number");
+  }
+
+  //handle this error
+  if (user._id === decodedToken.id) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You are not allowed to add money"
+    );
+  }
+
+  const decodedUserWallet = await Wallet.findOne({ owner: decodedToken.id });
+  if (!decodedUserWallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "your wallet not found");
+  }
+
+  const userWallet = await Wallet.findByIdAndUpdate(
+    user.wallet,
+    { $inc: { balance: +amount } },
     { new: true }
   );
   if (!userWallet) {
     throw new AppError(httpStatus.BAD_REQUEST, "User Wallet not found");
   }
-  //need logged in user id
+  const transaction = await Transaction.create({
+    fromWallet: decodedUserWallet?._id,
+    toWallet: userWallet._id,
+    initiator: decodedToken.id,
+    type: TransactionType.SEND,
+    status: TransactionStatus.COMPLETED,
+    amount: amount,
+  });
+  return { userWallet, transaction };
 };
 
 export const WalletServices = { addMoney, withdrawMoney, sendMoneyToUser };

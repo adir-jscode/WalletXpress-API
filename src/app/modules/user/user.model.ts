@@ -4,12 +4,11 @@ import { ApprovalStatus, IsActive, IUser, Role } from "./user.interface";
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
     address: { type: String, required: true },
-    nid: { type: String },
-    passportNumber: { type: String },
+    nid: { type: String, unique: true, required: true },
     isDeleted: { type: Boolean, default: false },
     isActive: {
       type: String,

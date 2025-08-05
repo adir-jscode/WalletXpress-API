@@ -3,6 +3,9 @@ import { catchAsync } from "../../utils/catchAsync";
 import { WalletServices } from "./wallet.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import { envVars } from "../../config/env";
+
 const addMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const addMoney = await WalletServices.addMoney(
@@ -33,4 +36,23 @@ const withdrawMoney = catchAsync(
   }
 );
 
-export const WalletControllers = { addMoney, withdrawMoney };
+const sendMoneyToUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { phone, amount } = req.body;
+    const verifyToken = req.user;
+    const sendMoney = await WalletServices.sendMoneyToUser(
+      phone,
+      amount,
+      verifyToken
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: `$ ${amount} sent successfully`,
+      data: sendMoney,
+    });
+  }
+);
+
+export const WalletControllers = { addMoney, withdrawMoney, sendMoneyToUser };
