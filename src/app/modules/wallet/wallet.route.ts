@@ -5,6 +5,8 @@ import { Role } from "../user/user.interface";
 
 const router = Router();
 
+router.get("/", checkAuth(Role.ADMIN), WalletControllers.getWallets);
+
 router.patch(
   "/add-money/:id",
   checkAuth(Role.USER),

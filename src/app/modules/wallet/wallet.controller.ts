@@ -67,9 +67,23 @@ const cashIn = catchAsync(
     });
   }
 );
+
+const getWallets = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const wallets = await WalletServices.getWallets();
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "All wallet retrived successfully",
+      data: wallets,
+    });
+  }
+);
+
 export const WalletControllers = {
   addMoney,
   withdrawMoney,
   sendMoneyToUser,
   cashIn,
+  getWallets,
 };

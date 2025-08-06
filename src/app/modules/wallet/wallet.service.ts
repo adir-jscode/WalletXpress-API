@@ -9,6 +9,8 @@ import {
 import { TransactionServices } from "../transaction/transaction.service";
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../user/user.model";
+import { WalletStatus } from "./wallet.interface";
+
 const addMoney = async (walletId: string, amount: number) => {
   const wallet = await Wallet.findByIdAndUpdate(
     { _id: walletId },
@@ -131,7 +133,7 @@ const cashIn = async (
 
   const agentWalletId = decodedToken.walletId;
   //create new transaction
-  const transaction = Transaction.create({
+  const transaction = await Transaction.create({
     fromWallet: agentWalletId,
     toWallet: isUserExist._id,
     initiator: decodedToken.id,
@@ -143,9 +145,15 @@ const cashIn = async (
   return { userWallet, agentWallet, transaction };
 };
 
+const getWallets = async () => {
+  const wallets = await Wallet.find({});
+  return wallets;
+};
+
 export const WalletServices = {
   addMoney,
   withdrawMoney,
   sendMoneyToUser,
   cashIn,
+  getWallets,
 };

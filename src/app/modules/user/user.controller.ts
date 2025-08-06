@@ -6,7 +6,7 @@ import httpStatus from "http-status-codes";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await UserServices.creatUser(req.body);
+    const user = await UserServices.createUser(req.body);
     sendResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
@@ -27,5 +27,16 @@ const getUsers = catchAsync(
     });
   }
 );
+const getAgents = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agents = await UserServices.getAgents;
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "All agent retrived successfully",
+      data: agents,
+    });
+  }
+);
 
-export const userControllers = { createUser, getUsers };
+export const userControllers = { createUser, getUsers, getAgents };

@@ -13,4 +13,13 @@ const getTransactionHistory = async (payload: JwtPayload) => {
   const transactionHistory = await Transaction.find({ initiator: userId });
   return transactionHistory;
 };
-export const TransactionServices = { createTransaction, getTransactionHistory };
+
+const getAllTransaction = async () => {
+  const transactions = await Transaction.find({});
+  return transactions;
+};
+export const TransactionServices = {
+  createTransaction,
+  getTransactionHistory,
+  getAllTransaction,
+};

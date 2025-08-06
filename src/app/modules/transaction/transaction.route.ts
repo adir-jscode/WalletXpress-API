@@ -7,7 +7,14 @@ const router = Router();
 
 router.get(
   "/",
+  checkAuth(Role.ADMIN),
+  TransactionControllers.getAllTransaction
+);
+
+router.get(
+  "/transaction-history",
   checkAuth(Role.USER),
   TransactionControllers.getTransactionHistory
 );
+
 export const transactionRoutes = router;

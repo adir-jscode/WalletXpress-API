@@ -17,4 +17,19 @@ const getTransactionHistory = catchAsync(
   }
 );
 
-export const TransactionControllers = { getTransactionHistory };
+const getAllTransaction = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const transactions = await TransactionServices.getAllTransaction();
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "All transaction retrived",
+      data: transactions,
+    });
+  }
+);
+
+export const TransactionControllers = {
+  getTransactionHistory,
+  getAllTransaction,
+};

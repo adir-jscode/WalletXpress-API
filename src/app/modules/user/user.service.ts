@@ -1,10 +1,10 @@
 import { envVars } from "../../config/env";
 import { Wallet } from "../wallet/wallet.model";
-import { IUser } from "./user.interface";
+import { IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import bcryptjs from "bcryptjs";
 
-const creatUser = async (payload: Partial<IUser>) => {
+const createUser = async (payload: Partial<IUser>) => {
   const { password, ...rest } = payload;
   const hashedPassword = await bcryptjs.hash(
     password as string,
@@ -23,7 +23,15 @@ const creatUser = async (payload: Partial<IUser>) => {
 };
 
 const getUsers = async () => {
-  const users = await User.find().populate("wallet").select("-password"); // don't pass password as response
+  const users = await User.find({ role: Role.USER })
+    .populate("wallet")
+    .select("-password");
   return users;
 };
-export const UserServices = { creatUser, getUsers };
+const getAgents = async () => {
+  const agents = await User.find({ role: Role.AGENT })
+    .populate("wallet")
+    .select("-password");
+  return agents;
+};
+export const UserServices = { createUser, getUsers, getAgents };
