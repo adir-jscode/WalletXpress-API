@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env";
 import AppError from "../errorHelpers/AppError";
 import { issue } from "zod/v4/core/util.cjs";
+import { handleDuplicateError } from "../helpers/handleDuplicateError";
+import { handleCastError } from "../helpers/handleCastError";
+import { handleValidationError } from "../helpers/handleValidationError";
+import { handleZodError } from "../helpers/handleZodError";
 
 export const globalErrorHandler = (
   err: any,
@@ -15,34 +19,24 @@ export const globalErrorHandler = (
 
   const errorSource: any = [];
   let statusCode = 500;
-  let message = `Something went wrong!! ${err.message}`;
+  let message = `Something went wrong!!`;
 
   if (err.code === 11000) {
-    statusCode = 400;
-    const matchedArray = err.message.match(/"([^"]*)"/);
-    message = `${matchedArray[1]} is already exists`;
+    const duplicateError = handleDuplicateError(err);
+    statusCode = duplicateError.statusCode;
+    message = duplicateError.message;
   } else if (err.name === "CastError") {
-    statusCode = 400;
-    message = "Invalid MongoDb ObjectID. Please provide a valid id";
+    const castError = handleCastError(err);
+    statusCode = castError.statusCode;
+    message = castError.message;
   } else if (err.name === "ValidationError") {
-    statusCode = 400;
-    const errors = Object.values(err.errors);
-    errors.forEach((objectObject: any) =>
-      errorSource.push({
-        path: objectObject.path,
-        message: objectObject.message,
-      })
-    );
-    message = "validation error";
+    const validationError = handleValidationError(err);
+    statusCode = validationError.statusCode;
+    message = validationError.message;
   } else if (err.name === "ZodError") {
-    statusCode = 400;
-    message = "Zod Error";
-    err.issues.forEach((issue: any) =>
-      errorSource.push({
-        path: issue.path[issue.path.length - 1],
-        message: issue.message,
-      })
-    );
+    const zodError = handleZodError(err);
+    statusCode = zodError.statusCode;
+    message = zodError.message;
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
@@ -54,7 +48,7 @@ export const globalErrorHandler = (
     success: false,
     message,
     errorSource,
-    err,
+    err: envVars.NODE_ENV === "development" ? err : null,
     stack: envVars.NODE_ENV === "development" ? err.stack : null,
   });
 };
