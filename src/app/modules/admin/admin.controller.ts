@@ -32,7 +32,24 @@ const blockUnlockUserWallets = catchAsync(
     });
   }
 );
+
+const approveSuspendAgent = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { approvalStatus } = req.body;
+    const updateStatus = await AdminServices.approveSuspendAgent(
+      req.params.id,
+      approvalStatus
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: `Agent is ${approvalStatus} successfully`,
+      data: updateStatus,
+    });
+  }
+);
 export const AdminControllers = {
   changeUserWalletStatus,
   blockUnlockUserWallets,
+  approveSuspendAgent,
 };

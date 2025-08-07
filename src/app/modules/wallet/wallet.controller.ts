@@ -8,14 +8,17 @@ import { envVars } from "../../config/env";
 
 const addMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    console.log(req.user);
     const addMoney = await WalletServices.addMoney(
-      req.params.id,
-      req.body.amount
+      req.body.phone,
+      req.body.balance,
+      req.user
     );
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: `$ ${req.body.amount} Top up successful`,
+      message: `$ ${req.body.balance} Top up successful`,
       data: addMoney,
     });
   }
@@ -24,13 +27,14 @@ const addMoney = catchAsync(
 const withdrawMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const withdrawMoney = await WalletServices.withdrawMoney(
-      req.params.id,
-      req.body.amount
+      req.body.phone,
+      req.body.balance,
+      req.user
     );
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: `$ ${req.body.amount} withdrawn successfully`,
+      message: `$ ${req.body.balance} withdrawn successfully`,
       data: withdrawMoney,
     });
   }

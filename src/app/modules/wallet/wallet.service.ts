@@ -6,62 +6,90 @@ import {
   TransactionStatus,
   TransactionType,
 } from "../transaction/transaction.interface";
-import { TransactionServices } from "../transaction/transaction.service";
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../user/user.model";
-import { WalletStatus } from "./wallet.interface";
+import { Role } from "../user/user.interface";
 
-const addMoney = async (walletId: string, amount: number) => {
-  const wallet = await Wallet.findByIdAndUpdate(
-    { _id: walletId },
-    { $inc: { balance: amount } },
-    { new: true }
-  );
-
-  if (!wallet) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found");
-  }
-
-  const transaction = await Transaction.create({
-    fromWallet: wallet._id,
-    toWallet: wallet._id,
-    initiator: wallet.owner,
-    type: TransactionType.ADD,
-    amount: amount,
-    status: TransactionStatus.COMPLETED,
-  });
-
-  return { wallet, transaction };
-};
-const withdrawMoney = async (walletId: string, amount: number) => {
-  if (amount < 0) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Withdraw amount must be positive"
-    );
+const addMoney = async (
+  phone: string,
+  balance: number,
+  decodedToken: JwtPayload
+) => {
+  const isUserExist = await User.findOne({ phone: phone });
+  if (!isUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "user not found");
   }
   const wallet = await Wallet.findOneAndUpdate(
-    { _id: walletId, balance: { $gte: amount } },
-    { $inc: { balance: -amount } },
+    { owner: isUserExist._id },
+    { $inc: { balance: +balance } },
+    { new: true }
+  );
+  if (!wallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "wallet not found");
+  }
+  const agentWallet = await Wallet.findOne({ owner: decodedToken.id });
+  if (!agentWallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "wallet not found");
+  }
+  if (agentWallet?.balance < balance) {
+    throw new AppError(httpStatus.BAD_REQUEST, "inssufficient balance");
+  }
+  const updateAgentWallet = await Wallet.findOneAndUpdate(
+    { owner: decodedToken.id },
+    { $inc: { balance: -balance } },
     { new: true }
   );
 
-  if (!wallet) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Wallet not found or insufficient balance"
-    );
-  }
-
   const transaction = await Transaction.create({
-    fromWallet: wallet._id,
+    fromWallet: agentWallet._id,
     toWallet: wallet._id,
-    initiator: wallet.owner,
-    type: TransactionType.WITHDRAW,
-    amount: amount,
+    initiator: decodedToken.id,
+    type: TransactionType.ADD,
+    amount: balance,
     status: TransactionStatus.COMPLETED,
   });
-  return { wallet, transaction };
+
+  return { wallet, updateAgentWallet, transaction };
+};
+const withdrawMoney = async (
+  phone: string,
+  balance: number,
+  decodedToken: JwtPayload
+) => {
+  const userWallet = await Wallet.findOne({ owner: decodedToken.id });
+  if (!userWallet) {
+    throw new AppError(400, "user wallet not found");
+  }
+  if (userWallet.balance < balance) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Insufficient wallet balance");
+  }
+
+  const updateUserWallet = await Wallet.findOneAndUpdate(
+    { owner: decodedToken.id },
+    { $inc: { balance: -balance } },
+    { new: true }
+  );
+
+  const agent = await User.findOne({ phone: phone, role: Role.AGENT });
+  if (!agent) {
+    throw new AppError(400, "Agent not found");
+  }
+
+  const updateAgent = await Wallet.findOneAndUpdate(
+    { owner: agent.id },
+    { $inc: { balance: +balance } },
+    { new: true }
+  );
+
+  const transaction = await Transaction.create({
+    fromWallet: userWallet._id,
+    toWallet: agent.wallet,
+    initiator: decodedToken.id,
+    type: TransactionType.WITHDRAW,
+    amount: balance,
+    status: TransactionStatus.COMPLETED,
+  });
+  return { updateAgent, updateUserWallet, transaction };
 };
 
 const sendMoneyToUser = async (
