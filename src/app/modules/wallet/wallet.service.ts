@@ -9,6 +9,7 @@ import {
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../user/user.model";
 import { Role } from "../user/user.interface";
+import { TransactionServices } from "../transaction/transaction.service";
 
 const addMoney = async (
   phone: string,
@@ -40,7 +41,7 @@ const addMoney = async (
     { new: true }
   );
 
-  const transaction = await Transaction.create({
+  const transaction = await TransactionServices.createTransaction({
     fromWallet: agentWallet._id,
     toWallet: wallet._id,
     initiator: decodedToken.id,
