@@ -6,9 +6,12 @@ export const loginZodSchema = z.object({
 });
 export const changePasswordZodSchema = z.object({
   oldPassword: z.string({ message: "Old password must be a string" }),
-  password: z.string({ message: "New password must be a string" }),
+  newPassword: z.string({ message: "New password must be a string" }),
 });
 
 export const forgotPasswordZodSchema = z.object({
   email: z.string({ message: "Email must be a string" }).email(),
+});
+export const resetPasswordZodSchema = z.object({
+  newPassword: z.string({ message: "new password is required" }),
 });

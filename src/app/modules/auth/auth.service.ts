@@ -7,9 +7,9 @@ import {
   createAccessTokenWithRefreshToken,
   createUserTokens,
 } from "../../utils/userTokens";
-import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import { sendEmail } from "../../utils/sendEmail";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { phone, password } = payload;
@@ -94,16 +94,22 @@ const forgetPassword = async (email: string) => {
       "account is deleted or not verified"
     );
   } else if (isUserExist.approvalStatus !== ApprovalStatus.APPROVED) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "The Account is not approved yet"
-    );
+    throw new AppError(httpStatus.BAD_REQUEST, "The Account is not approved");
   }
+  const jwtPayload = {
+    id: isUserExist._id,
+    email: isUserExist.email,
+    role: isUserExist.role,
+    walletId: isUserExist.wallet,
+  };
+  const resetToken = jwt.sign(jwtPayload, envVars.JWT_ACCESS_SECRET, {
+    expiresIn: "10m",
+  });
 
-  const resetUILink = ``;
+  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
   await sendEmail({
     to: email,
-    subject: "Password reset",
+    subject: "Forget Password Request",
     templateName: "forgotPassword",
     templateData: {
       name: isUserExist.name,
@@ -112,9 +118,33 @@ const forgetPassword = async (email: string) => {
   });
 };
 
+const resetPassword = async (
+  payload: Record<string, any>,
+  decodedToken: JwtPayload
+) => {
+  console.log("payload", payload);
+  if (payload.id !== decodedToken.id) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You can not reset your password"
+    );
+  }
+  const isUserExist = await User.findById(decodedToken.id);
+  if (!isUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "user not found");
+  }
+  const hashNewPassword = await bcryptjs.hash(
+    payload.password,
+    Number(envVars.BCRYPT_SALT_ROUND)
+  );
+  isUserExist.password = hashNewPassword;
+  await isUserExist.save();
+};
+
 export const AuthServices = {
   credentialsLogin,
   getNewAccessToken,
   changePassword,
   forgetPassword,
+  resetPassword,
 };

@@ -5,6 +5,9 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { setAuthCookie } from "../../utils/setCookie";
 import AppError from "../../errorHelpers/AppError";
+import { verifyToken } from "../../utils/jwt";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -78,9 +81,47 @@ const changePassword = catchAsync(
   }
 );
 
+const forgetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    await AuthServices.forgetPassword(email);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Reset password URL sent Successfully",
+      data: null,
+    });
+  }
+);
+
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.query.id;
+    const resetToken = req.query.token;
+    const newPassword = req.body.newPassword;
+    const payload = {
+      id: userId,
+      password: newPassword,
+    };
+    const decodedToken = await verifyToken(
+      resetToken as string,
+      envVars.JWT_ACCESS_SECRET
+    );
+    await AuthServices.resetPassword(payload, decodedToken as JwtPayload);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset Successfully",
+      data: null,
+    });
+  }
+);
+
 export const AuthControllers = {
   credentialsLogin,
   getNewAccessToken,
   logout,
   changePassword,
+  forgetPassword,
+  resetPassword,
 };

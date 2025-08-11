@@ -3,7 +3,12 @@ import { AuthControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { loginZodSchema, changePasswordZodSchema } from "./auth.validation";
+import {
+  loginZodSchema,
+  changePasswordZodSchema,
+  resetPasswordZodSchema,
+  forgotPasswordZodSchema,
+} from "./auth.validation";
 
 const router = Router();
 
@@ -19,6 +24,16 @@ router.post(
   validateRequest(changePasswordZodSchema),
   checkAuth(...Object.values(Role)),
   AuthControllers.changePassword
+);
+router.post(
+  "/forget-password",
+  validateRequest(forgotPasswordZodSchema),
+  AuthControllers.forgetPassword
+);
+router.post(
+  "/reset-password",
+  validateRequest(resetPasswordZodSchema),
+  AuthControllers.resetPassword
 );
 
 export const authRoutes = router;

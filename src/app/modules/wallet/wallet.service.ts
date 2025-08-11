@@ -111,7 +111,9 @@ const withdrawMoney = async (
     const agent = await User.findOne({
       phone: phone,
       role: Role.AGENT,
-      status: WalletStatus.ACTIVE,
+      isActive: IsActive.ACTIVE,
+      isVerified: true,
+      isDeleted: false,
     });
     if (!agent) {
       throw new AppError(400, "Agent not found");
