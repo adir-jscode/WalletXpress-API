@@ -17,6 +17,20 @@ interface EnvConfig {
   ADMIN_PHONE: string;
   ADMIN_ADDRESS: string;
   ADMIN_NID: string;
+  FRONTEND_URL: string;
+  EMAIL_SENDER: {
+    SMTP_USER: string;
+    SMTP_PASS: string;
+    SMTP_PORT: string;
+    SMTP_HOST: string;
+    SMTP_FROM: string;
+  };
+  REDIS: {
+    REDIS_USERNAME: string;
+    REDIS_PASSWORD: string;
+    REDIS_HOST: string;
+    REDIS_PORT: string;
+  };
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -35,6 +49,16 @@ const loadEnvVariables = (): EnvConfig => {
     "ADMIN_PHONE",
     "ADMIN_ADDRESS",
     "ADMIN_NID",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_PORT",
+    "SMTP_HOST",
+    "SMTP_FROM",
+    "FRONTEND_URL",
+    "REDIS_USERNAME",
+    "REDIS_PASSWORD",
+    "REDIS_HOST",
+    "REDIS_PORT",
   ];
   requiredEnvVariables.forEach((key) => {
     if (!process.env[key]) {
@@ -56,6 +80,20 @@ const loadEnvVariables = (): EnvConfig => {
     ADMIN_PHONE: process.env.ADMIN_PHONE as string,
     ADMIN_ADDRESS: process.env.ADMIN_ADDRESS as string,
     ADMIN_NID: process.env.ADMIN_NID as string,
+    FRONTEND_URL: process.env.FRONTEND_URL as string,
+    EMAIL_SENDER: {
+      SMTP_USER: process.env.SMTP_USER as string,
+      SMTP_PASS: process.env.SMTP_PASS as string,
+      SMTP_PORT: process.env.SMTP_PORT as string,
+      SMTP_HOST: process.env.SMTP_HOST as string,
+      SMTP_FROM: process.env.SMTP_FROM as string,
+    },
+    REDIS: {
+      REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+      REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
+      REDIS_HOST: process.env.REDIS_HOST as string,
+      REDIS_PORT: process.env.REDIS_PORT as string,
+    },
   };
 };
 

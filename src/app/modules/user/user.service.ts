@@ -1,25 +1,41 @@
 import { envVars } from "../../config/env";
+import { OtpServices } from "../Otp/otp.service";
 import { Wallet } from "../wallet/wallet.model";
 import { IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import bcryptjs from "bcryptjs";
 
 const createUser = async (payload: Partial<IUser>) => {
-  const { password, ...rest } = payload;
-  const hashedPassword = await bcryptjs.hash(
-    password as string,
-    Number(envVars.BCRYPT_SALT_ROUND)
-  );
-  const user = await User.create({ ...rest, password: hashedPassword });
-  const wallet = await Wallet.create({ owner: user._id });
-  const updatedUser = await User.findByIdAndUpdate(
-    user._id,
-    {
-      wallet: wallet._id,
-    },
-    { new: true, runValidators: true }
-  );
-  return { updatedUser, wallet };
+  //transaction rollback
+  const session = await User.startSession();
+  session.startTransaction();
+  try {
+    const { password, ...rest } = payload;
+    const hashedPassword = await bcryptjs.hash(
+      password as string,
+      Number(envVars.BCRYPT_SALT_ROUND)
+    );
+    const user = await User.create([{ ...rest, password: hashedPassword }], {
+      session,
+    });
+    const wallet = await Wallet.create([{ owner: user[0]._id }], { session });
+    const updatedUser = await User.findByIdAndUpdate(
+      user[0]._id,
+      {
+        wallet: wallet[0]._id,
+      },
+      { new: true, runValidators: true, session }
+    ).select("-password");
+
+    // await OtpServices.sendOtp(payload?.email as string, payload.name as string);
+    await session.commitTransaction();
+    session.endSession();
+    return { updatedUser, wallet };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 const getUsers = async () => {

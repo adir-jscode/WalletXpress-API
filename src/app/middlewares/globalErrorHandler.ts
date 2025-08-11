@@ -5,6 +5,7 @@ import { handleDuplicateError } from "../helpers/handleDuplicateError";
 import { handleCastError } from "../helpers/handleCastError";
 import { handleValidationError } from "../helpers/handleValidationError";
 import { handleZodError } from "../helpers/handleZodError";
+import { TErrorSources } from "../interfaces/error.types";
 
 export const globalErrorHandler = (
   err: any,
@@ -16,7 +17,7 @@ export const globalErrorHandler = (
     console.log(err.issues);
   }
 
-  const errorSource: any = [];
+  let errorSource: TErrorSources[] = [];
   let statusCode = 500;
   let message = `Something went wrong!!`;
 
@@ -32,10 +33,12 @@ export const globalErrorHandler = (
     const validationError = handleValidationError(err);
     statusCode = validationError.statusCode;
     message = validationError.message;
+    errorSource = validationError.errorSource as TErrorSources[];
   } else if (err.name === "ZodError") {
     const zodError = handleZodError(err);
     statusCode = zodError.statusCode;
     message = zodError.message;
+    errorSource = zodError.errorSource as TErrorSources[];
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;

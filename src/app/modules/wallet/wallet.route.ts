@@ -3,7 +3,11 @@ import { WalletControllers } from "./wallet.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { addMoneySchema, withdrawMoneySchema } from "./wallet.validation";
+import {
+  addMoneySchema,
+  sendMoneyToUserSchema,
+  withdrawMoneySchema,
+} from "./wallet.validation";
 
 const router = Router();
 
@@ -23,9 +27,9 @@ router.patch(
 );
 router.patch(
   "/send-money",
+  validateRequest(sendMoneyToUserSchema),
   checkAuth(Role.USER),
   WalletControllers.sendMoneyToUser
 );
-router.patch("/cash-in", checkAuth(Role.AGENT), WalletControllers.cashIn);
 
 export const walletRoutes = router;

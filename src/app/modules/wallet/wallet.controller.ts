@@ -8,8 +8,6 @@ import { envVars } from "../../config/env";
 
 const addMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    console.log(req.user);
     const addMoney = await WalletServices.addMoney(
       req.body.phone,
       req.body.balance,

@@ -8,11 +8,11 @@ import { updateApprovalStatusZodSchema } from "../user/user.validation";
 
 const router = Router();
 
-router.patch(
-  "/:id",
-  checkAuth(Role.ADMIN),
-  AdminControllers.changeUserWalletStatus
-);
+// router.patch(
+//   "/:id",
+//   checkAuth(Role.ADMIN),
+//   AdminControllers.changeUserWalletStatus
+// );
 
 router.patch(
   "/block-unblock/:id",

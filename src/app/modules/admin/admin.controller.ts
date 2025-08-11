@@ -3,19 +3,19 @@ import { catchAsync } from "../../utils/catchAsync";
 import { AdminServices } from "./admin.service";
 import { sendResponse } from "../../utils/sendResponse";
 
-const changeUserWalletStatus = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const updateStatus = await AdminServices.changeUserWalletStatus(
-      req.params.id
-    );
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: "Status updated successfully",
-      data: updateStatus,
-    });
-  }
-);
+// const changeUserWalletStatus = catchAsync(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const updateStatus = await AdminServices.changeUserWalletStatus(
+//       req.params.id
+//     );
+//     sendResponse(res, {
+//       statusCode: 200,
+//       success: true,
+//       message: "Status updated successfully",
+//       data: updateStatus,
+//     });
+//   }
+// );
 const blockUnlockUserWallets = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { status } = req.body;
@@ -49,7 +49,6 @@ const approveSuspendAgent = catchAsync(
   }
 );
 export const AdminControllers = {
-  changeUserWalletStatus,
   blockUnlockUserWallets,
   approveSuspendAgent,
 };

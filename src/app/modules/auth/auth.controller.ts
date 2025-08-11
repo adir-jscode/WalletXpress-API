@@ -40,4 +40,47 @@ const getNewAccessToken = catchAsync(
   }
 );
 
-export const AuthControllers = { credentialsLogin, getNewAccessToken };
+const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User Logged Out Successfully",
+      data: null,
+    });
+  }
+);
+
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await AuthServices.changePassword(
+      req.user,
+      req.body.oldPassword,
+      req.body.newPassword
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password Changed Successfully",
+      data: null,
+    });
+  }
+);
+
+export const AuthControllers = {
+  credentialsLogin,
+  getNewAccessToken,
+  logout,
+  changePassword,
+};

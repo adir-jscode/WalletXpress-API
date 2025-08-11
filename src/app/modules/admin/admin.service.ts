@@ -4,29 +4,29 @@ import { User } from "../user/user.model";
 import { WalletStatus } from "../wallet/wallet.interface";
 import { Wallet } from "../wallet/wallet.model";
 
-const changeUserWalletStatus = async (userId: string) => {
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      isActive: IsActive.ACTIVE,
-      approvalStatus: ApprovalStatus.APPROVED,
-    },
-    { new: true }
-  );
-  if (!updatedUser) {
-    throw new AppError(400, "User not found");
-  }
-  //update wallet
-  const updatedWallet = await Wallet.findOneAndUpdate(
-    { owner: userId },
-    { status: WalletStatus.ACTIVE },
-    { new: true }
-  );
-  if (!updatedWallet) {
-    throw new AppError(400, "Wallet not found");
-  }
-  return { updatedUser, updatedWallet };
-};
+// const changeUserWalletStatus = async (userId: string) => {
+//   const updatedUser = await User.findByIdAndUpdate(
+//     userId,
+//     {
+//       isActive: IsActive.ACTIVE,
+//       approvalStatus: ApprovalStatus.APPROVED,
+//     },
+//     { new: true }
+//   );
+//   if (!updatedUser) {
+//     throw new AppError(400, "User not found");
+//   }
+//   //update wallet
+//   const updatedWallet = await Wallet.findOneAndUpdate(
+//     { owner: userId },
+//     { status: WalletStatus.ACTIVE },
+//     { new: true }
+//   );
+//   if (!updatedWallet) {
+//     throw new AppError(400, "Wallet not found");
+//   }
+//   return { updatedUser, updatedWallet };
+// };
 
 const blockUnlockUserWallets = async (userId: string, status: WalletStatus) => {
   const userWallet = await Wallet.findOne({ owner: userId });
@@ -60,7 +60,6 @@ const approveSuspendAgent = async (
 };
 
 export const AdminServices = {
-  changeUserWalletStatus,
   blockUnlockUserWallets,
   approveSuspendAgent,
 };
