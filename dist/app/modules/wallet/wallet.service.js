@@ -132,7 +132,7 @@ const sendMoneyToUser = (phone, amount, decodedToken) => __awaiter(void 0, void 
         if (!user) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid phone number");
         }
-        if (user._id === decodedToken.id) {
+        if (user._id.toString() === decodedToken.id) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not allowed to add money");
         }
         const decodedUserWallet = yield wallet_model_1.Wallet.findOneAndUpdate({

@@ -170,7 +170,7 @@ const sendMoneyToUser = async (
       throw new AppError(httpStatus.BAD_REQUEST, "Invalid phone number");
     }
 
-    if (user._id === decodedToken.id) {
+    if (user._id.toString() === decodedToken.id) {
       throw new AppError(
         httpStatus.BAD_REQUEST,
         "You are not allowed to add money"

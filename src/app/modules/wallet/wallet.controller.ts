@@ -40,18 +40,18 @@ const withdrawMoney = catchAsync(
 
 const sendMoneyToUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { phone, amount } = req.body;
+    const { phone, balance } = req.body;
     const verifyToken = req.user;
     const sendMoney = await WalletServices.sendMoneyToUser(
       phone,
-      amount,
+      balance,
       verifyToken
     );
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: `$ ${amount} sent successfully`,
+      message: `$ ${balance} sent successfully`,
       data: sendMoney,
     });
   }

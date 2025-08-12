@@ -36,13 +36,13 @@ const withdrawMoney = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter
     });
 }));
 const sendMoneyToUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phone, amount } = req.body;
+    const { phone, balance } = req.body;
     const verifyToken = req.user;
-    const sendMoney = yield wallet_service_1.WalletServices.sendMoneyToUser(phone, amount, verifyToken);
+    const sendMoney = yield wallet_service_1.WalletServices.sendMoneyToUser(phone, balance, verifyToken);
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: http_status_codes_1.default.OK,
         success: true,
-        message: `$ ${amount} sent successfully`,
+        message: `$ ${balance} sent successfully`,
         data: sendMoney,
     });
 }));
