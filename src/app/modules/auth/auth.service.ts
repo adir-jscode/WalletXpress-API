@@ -9,7 +9,7 @@ import {
 } from "../../utils/userTokens";
 import { envVars } from "../../config/env";
 import { sendEmail } from "../../utils/sendEmail";
-import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { phone, password } = payload;
