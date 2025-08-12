@@ -122,7 +122,6 @@ const resetPassword = async (
   payload: Record<string, any>,
   decodedToken: JwtPayload
 ) => {
-  console.log("payload", payload);
   if (payload.id !== decodedToken.id) {
     throw new AppError(
       httpStatus.UNAUTHORIZED,

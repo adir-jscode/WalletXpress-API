@@ -1,10 +1,18 @@
-# DigitalXpress - Digital Wallet API
+# WalletXpress-API
 
 A secure, modular, and role-based backend API for a digital wallet system (similar to Bkash or Nagad) built with Express.js and Mongoose.
 
 ## 🎯 Project Overview
 
 DigitalXpress enables users to register, manage wallets, and perform core financial operations such as add money, withdraw, and send money. The system supports three roles: **admin**, **user**, and **agent**, each with specific permissions and capabilities.
+
+## 🌐 Live Deployment
+
+🔗 [Click to access the live API](https://wallet-xpress-api-v1.vercel.app/)
+
+## 📄Postman API Documentation
+
+🔗 [Postman API Documentation](https://documenter.getpostman.com/view/20685543/2sB3BEpAqj)
 
 ---
 
@@ -168,8 +176,10 @@ Below are the main API endpoints for DigitalXpress, organized by feature and rol
 
 ### 1️⃣ Clone the repository\*
 
+```sh
 git clone https://github.com/yourname/DigitalXpress.git
 cd DigitalXpress
+```
 
 ### 2️⃣ Install dependencies
 
