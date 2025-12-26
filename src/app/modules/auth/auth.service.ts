@@ -1,21 +1,27 @@
-import AppError from "../../errorHelpers/AppError";
-import { ApprovalStatus, IsActive, IUser } from "../user/user.interface";
-import { User } from "../user/user.model";
-import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
+import httpStatus from "http-status-codes";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { envVars } from "../../config/env";
+import AppError from "../../errorHelpers/AppError";
+import { sendEmail } from "../../utils/sendEmail";
 import {
   createAccessTokenWithRefreshToken,
   createUserTokens,
 } from "../../utils/userTokens";
-import { envVars } from "../../config/env";
-import { sendEmail } from "../../utils/sendEmail";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { ApprovalStatus, IsActive, IUser } from "../user/user.interface";
+import { User } from "../user/user.model";
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { phone, password } = payload;
   const isUserExist = await User.findOne({ phone });
+  const passwordMatched = await bcryptjs.compare(
+    password as string,
+    isUserExist.password
+  );
   if (!isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid phone number");
+  } else if (!passwordMatched) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password");
   } else if (isUserExist.isDeleted) {
     throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
   } else if (isUserExist.isActive !== IsActive.ACTIVE) {
@@ -27,14 +33,6 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
     throw new AppError(httpStatus.BAD_REQUEST, "User is not verified");
   } else if (isUserExist.approvalStatus !== ApprovalStatus.APPROVED) {
     throw new AppError(httpStatus.BAD_REQUEST, "User is not approved by admin");
-  }
-
-  const passwordMatched = await bcryptjs.compare(
-    password as string,
-    isUserExist.password
-  );
-  if (!passwordMatched) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password");
   }
 
   const userToken = createUserTokens(isUserExist);
