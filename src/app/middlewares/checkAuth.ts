@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
-import AppError from "../errorHelpers/AppError";
+import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
+import AppError from "../errorHelpers/AppError";
 import { verifyToken } from "../utils/jwt";
 export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.authorization;
+      const token = req.headers.authorization || req.cookies.accessToken;
       if (!token) {
         throw new AppError(401, "token not received");
       }

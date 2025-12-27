@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { UserServices } from "./user.service";
-import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { UserServices } from "./user.service";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -12,6 +12,26 @@ const createUser = catchAsync(
       success: true,
       message: "User created successfully",
       data: user,
+    });
+  }
+);
+
+const getMe = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    const result = await UserServices.getMe(decodedToken.id);
+    console.log(result);
+
+    // res.status(httpStatus.OK).json({
+    //     success: true,
+    //     message: "All Users Retrieved Successfully",
+    //     data: users
+    // })
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.CREATED,
+      message: "Your profile Retrieved Successfully",
+      data: result.data,
     });
   }
 );
@@ -39,4 +59,4 @@ const getAgents = catchAsync(
   }
 );
 
-export const userControllers = { createUser, getUsers, getAgents };
+export const userControllers = { createUser, getUsers, getAgents, getMe };
