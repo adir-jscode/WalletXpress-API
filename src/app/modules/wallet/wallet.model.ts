@@ -8,7 +8,7 @@ const walletSchema = new Schema<IWallet>(
     status: {
       type: String,
       enum: Object.values(WalletStatus),
-      default: WalletStatus.INACTIVE,
+      default: WalletStatus.ACTIVE,
     },
   },
   { timestamps: true, versionKey: false }

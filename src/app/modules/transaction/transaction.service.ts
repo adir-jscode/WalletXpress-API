@@ -15,7 +15,7 @@ const getTransactionHistory = async (payload: JwtPayload) => {
 };
 
 const getAllTransaction = async () => {
-  const transactions = await Transaction.find({});
+  const transactions = await Transaction.find({}).populate("initiator");
   return transactions;
 };
 export const TransactionServices = {

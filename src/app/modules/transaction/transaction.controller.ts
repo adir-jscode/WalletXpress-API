@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
-import { TransactionServices } from "./transaction.service";
 import { sendResponse } from "../../utils/sendResponse";
+import { TransactionServices } from "./transaction.service";
 
 const getTransactionHistory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

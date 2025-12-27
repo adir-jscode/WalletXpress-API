@@ -20,13 +20,6 @@ const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
     const result = await UserServices.getMe(decodedToken.id);
-    console.log(result);
-
-    // res.status(httpStatus.OK).json({
-    //     success: true,
-    //     message: "All Users Retrieved Successfully",
-    //     data: users
-    // })
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
@@ -49,7 +42,7 @@ const getUsers = catchAsync(
 );
 const getAgents = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const agents = await UserServices.getAgents;
+    const agents = await UserServices.getAgents();
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

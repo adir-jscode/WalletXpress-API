@@ -1,17 +1,16 @@
-import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
-import { Wallet } from "./wallet.model";
-import { Transaction } from "../transaction/transaction.model";
+import { JwtPayload } from "jsonwebtoken";
+import mongoose from "mongoose";
+import AppError from "../../errorHelpers/AppError";
 import {
   TransactionStatus,
   TransactionType,
 } from "../transaction/transaction.interface";
-import { JwtPayload } from "jsonwebtoken";
-import { User } from "../user/user.model";
+import { Transaction } from "../transaction/transaction.model";
 import { ApprovalStatus, IsActive, Role } from "../user/user.interface";
-import { TransactionServices } from "../transaction/transaction.service";
+import { User } from "../user/user.model";
 import { WalletStatus } from "./wallet.interface";
-import mongoose from "mongoose";
+import { Wallet } from "./wallet.model";
 
 const addMoney = async (
   phone: string,
@@ -225,10 +224,19 @@ const getWallets = async () => {
   const wallets = await Wallet.find({});
   return wallets;
 };
+//getWalletIdByUserId
+const getWalletIdByUserId = async (userId: string) => {
+  const wallet = await Wallet.findOne({ owner: userId });
+  if (!wallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "wallet not found");
+  }
+  return wallet._id;
+};
 
 export const WalletServices = {
   addMoney,
   withdrawMoney,
   sendMoneyToUser,
   getWallets,
+  getWalletIdByUserId,
 };

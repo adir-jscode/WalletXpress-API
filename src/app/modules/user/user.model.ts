@@ -15,7 +15,7 @@ const userSchema = new Schema<IUser>(
       enum: Object.values(IsActive),
       default: IsActive.ACTIVE,
     },
-    isVerified: { type: Boolean, default: false },
+    isVerified: { type: Boolean, default: true },
     role: { type: String, enum: Object.values(Role), default: Role.USER },
     wallet: { type: Schema.Types.ObjectId, ref: "Wallet" },
     comissionRate: { type: Number, default: 0 },
