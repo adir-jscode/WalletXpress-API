@@ -24,20 +24,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const env_1 = require("../../config/env");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
+const sendEmail_1 = require("../../utils/sendEmail");
+const userTokens_1 = require("../../utils/userTokens");
 const user_interface_1 = require("../user/user.interface");
 const user_model_1 = require("../user/user.model");
-const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const userTokens_1 = require("../../utils/userTokens");
-const env_1 = require("../../config/env");
-const sendEmail_1 = require("../../utils/sendEmail");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { phone, password } = payload;
     const isUserExist = yield user_model_1.User.findOne({ phone });
+    const passwordMatched = yield bcryptjs_1.default.compare(password, isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.password);
     if (!isUserExist) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid phone number");
+    }
+    else if (!passwordMatched) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Incorrect Password");
     }
     else if (isUserExist.isDeleted) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User is deleted");
@@ -50,10 +54,6 @@ const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function
     }
     else if (isUserExist.approvalStatus !== user_interface_1.ApprovalStatus.APPROVED) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User is not approved by admin");
-    }
-    const passwordMatched = yield bcryptjs_1.default.compare(password, isUserExist.password);
-    if (!passwordMatched) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Incorrect Password");
     }
     const userToken = (0, userTokens_1.createUserTokens)(isUserExist);
     const _a = isUserExist.toObject(), { password: pass } = _a, rest = __rest(_a, ["password"]);

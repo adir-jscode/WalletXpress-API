@@ -13,12 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkAuth = void 0;
-const AppError_1 = __importDefault(require("../errorHelpers/AppError"));
 const env_1 = require("../config/env");
+const AppError_1 = __importDefault(require("../errorHelpers/AppError"));
 const jwt_1 = require("../utils/jwt");
 const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization || req.cookies.accessToken;
         if (!token) {
             throw new AppError_1.default(401, "token not received");
         }

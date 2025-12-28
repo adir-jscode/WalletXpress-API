@@ -13,15 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletServices = void 0;
-const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const wallet_model_1 = require("./wallet.model");
-const transaction_model_1 = require("../transaction/transaction.model");
-const transaction_interface_1 = require("../transaction/transaction.interface");
-const user_model_1 = require("../user/user.model");
-const user_interface_1 = require("../user/user.interface");
-const wallet_interface_1 = require("./wallet.interface");
 const mongoose_1 = __importDefault(require("mongoose"));
+const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
+const transaction_interface_1 = require("../transaction/transaction.interface");
+const transaction_model_1 = require("../transaction/transaction.model");
+const user_interface_1 = require("../user/user.interface");
+const user_model_1 = require("../user/user.model");
+const wallet_interface_1 = require("./wallet.interface");
+const wallet_model_1 = require("./wallet.model");
 const addMoney = (phone, balance, decodedToken) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -168,9 +168,18 @@ const getWallets = () => __awaiter(void 0, void 0, void 0, function* () {
     const wallets = yield wallet_model_1.Wallet.find({});
     return wallets;
 });
+//getWalletIdByUserId
+const getWalletIdByUserId = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const wallet = yield wallet_model_1.Wallet.findOne({ owner: userId });
+    if (!wallet) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "wallet not found");
+    }
+    return wallet._id;
+});
 exports.WalletServices = {
     addMoney,
     withdrawMoney,
     sendMoneyToUser,
     getWallets,
+    getWalletIdByUserId,
 };

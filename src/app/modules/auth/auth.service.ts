@@ -16,7 +16,7 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   const isUserExist = await User.findOne({ phone });
   const passwordMatched = await bcryptjs.compare(
     password as string,
-    isUserExist.password
+    isUserExist?.password as string
   );
   if (!isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid phone number");

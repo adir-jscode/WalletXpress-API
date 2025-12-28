@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import { User } from "../user/user.model";
 import { ITransaction } from "./transaction.interface";
 import { Transaction } from "./transaction.model";
 
@@ -10,7 +11,18 @@ const createTransaction = async (payload: Partial<ITransaction>) => {
 //View transaction history -> logged in user id
 const getTransactionHistory = async (payload: JwtPayload) => {
   const userId = payload.id;
-  const transactionHistory = await Transaction.find({ initiator: userId });
+  //find walletId from user
+  const walletId = await User.findById(userId).select("wallet");
+  if (!walletId) {
+    throw new Error("Wallet not found for the user");
+  }
+  const transactionHistory = await Transaction.find({
+    $or: [{ initiator: userId }, { type: "CASH_IN" }],
+  }).populate("initiator");
+  //sort by createdAt descending
+  transactionHistory.sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+  );
   return transactionHistory;
 };
 

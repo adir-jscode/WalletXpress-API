@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { TransactionControllers } from "./transaction.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
+import { TransactionControllers } from "./transaction.controller";
 
 const router = Router();
 
@@ -13,7 +13,7 @@ router.get(
 
 router.get(
   "/transaction-history",
-  checkAuth(Role.USER),
+  checkAuth(Role.USER, Role.AGENT),
   TransactionControllers.getTransactionHistory
 );
 

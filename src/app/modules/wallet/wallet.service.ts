@@ -176,6 +176,15 @@ const sendMoneyToUser = async (
       );
     }
 
+    //check insufficient balance
+    const senderWallet = await Wallet.findOne({ owner: decodedToken.id });
+    if (!senderWallet) {
+      throw new AppError(httpStatus.BAD_REQUEST, "your wallet not found");
+    }
+    if (senderWallet.balance < amount) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Insufficient balance");
+    }
+
     const decodedUserWallet = await Wallet.findOneAndUpdate(
       {
         owner: decodedToken.id,

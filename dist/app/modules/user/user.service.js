@@ -24,11 +24,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const env_1 = require("../../config/env");
 const wallet_model_1 = require("../wallet/wallet.model");
 const user_interface_1 = require("./user.interface");
 const user_model_1 = require("./user.model");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     //transaction rollback
     const session = yield user_model_1.User.startSession();
@@ -66,4 +66,10 @@ const getAgents = () => __awaiter(void 0, void 0, void 0, function* () {
         .select("-password");
     return agents;
 });
-exports.UserServices = { createUser, getUsers, getAgents };
+const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId).select("-password");
+    return {
+        data: user,
+    };
+});
+exports.UserServices = { createUser, getUsers, getAgents, getMe };

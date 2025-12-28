@@ -9,7 +9,7 @@ const walletSchema = new mongoose_1.Schema({
     status: {
         type: String,
         enum: Object.values(wallet_interface_1.WalletStatus),
-        default: wallet_interface_1.WalletStatus.INACTIVE,
+        default: wallet_interface_1.WalletStatus.ACTIVE,
     },
 }, { timestamps: true, versionKey: false });
 exports.Wallet = (0, mongoose_1.model)("Wallet", walletSchema);

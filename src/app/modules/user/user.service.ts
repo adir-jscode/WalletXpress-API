@@ -51,7 +51,9 @@ const getAgents = async () => {
 };
 
 const getMe = async (userId: string) => {
-  const user = await User.findById(userId).select("-password");
+  const user = await User.findById(userId)
+    .select("-password")
+    .populate("wallet");
   return {
     data: user,
   };

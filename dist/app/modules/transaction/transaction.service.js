@@ -22,7 +22,7 @@ const getTransactionHistory = (payload) => __awaiter(void 0, void 0, void 0, fun
     return transactionHistory;
 });
 const getAllTransaction = () => __awaiter(void 0, void 0, void 0, function* () {
-    const transactions = yield transaction_model_1.Transaction.find({});
+    const transactions = yield transaction_model_1.Transaction.find({}).populate("initiator");
     return transactions;
 });
 exports.TransactionServices = {
