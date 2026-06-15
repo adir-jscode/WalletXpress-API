@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
+import { rateLimitMiddleware } from "../../middlewares/rateLimit";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { userControllers } from "./user.controller";
 import { Role } from "./user.interface";
@@ -9,8 +10,9 @@ const router = Router();
 
 router.post(
   "/",
+  rateLimitMiddleware,
   validateRequest(createUserZodSchema),
-  userControllers.createUser
+  userControllers.createUser,
 );
 
 router.get("/users", checkAuth(Role.ADMIN), userControllers.getUsers);

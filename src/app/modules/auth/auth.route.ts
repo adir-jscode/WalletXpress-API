@@ -1,39 +1,48 @@
 import { Router } from "express";
-import { AuthControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
-import { Role } from "../user/user.interface";
+import { rateLimitMiddleware } from "../../middlewares/rateLimit";
 import { validateRequest } from "../../middlewares/validateRequest";
+import { Role } from "../user/user.interface";
+import { AuthControllers } from "./auth.controller";
 import {
-  loginZodSchema,
   changePasswordZodSchema,
-  resetPasswordZodSchema,
   forgotPasswordZodSchema,
+  loginZodSchema,
+  resetPasswordZodSchema,
 } from "./auth.validation";
 
 const router = Router();
 
 router.post(
   "/login",
+  rateLimitMiddleware,
   validateRequest(loginZodSchema),
-  AuthControllers.credentialsLogin
+  AuthControllers.credentialsLogin,
 );
-router.post("/refresh-token", AuthControllers.getNewAccessToken);
-router.post("/logout", AuthControllers.logout);
+router.post(
+  "/refresh-token",
+  rateLimitMiddleware,
+  AuthControllers.getNewAccessToken,
+);
+router.post("/logout", rateLimitMiddleware, AuthControllers.logout);
 router.post(
   "/change-password",
+  rateLimitMiddleware,
   validateRequest(changePasswordZodSchema),
   checkAuth(...Object.values(Role)),
-  AuthControllers.changePassword
+  AuthControllers.changePassword,
 );
 router.post(
   "/forget-password",
+  rateLimitMiddleware,
   validateRequest(forgotPasswordZodSchema),
-  AuthControllers.forgetPassword
+  AuthControllers.forgetPassword,
 );
 router.post(
   "/reset-password",
+  rateLimitMiddleware,
   validateRequest(resetPasswordZodSchema),
-  AuthControllers.resetPassword
+  AuthControllers.resetPassword,
 );
 
 export const authRoutes = router;
