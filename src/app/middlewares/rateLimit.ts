@@ -50,6 +50,9 @@ export const rateLimitMiddleware = (
   }
 
   // Check limit
+  console.log(
+    `IP: ${ip}, Count: ${ipRequests[ip].count}, Elapsed: ${currentTime - ipRequests[ip].startTime}ms`,
+  );
   if (ipRequests[ip].count > maxRequests) {
     res.status(429).json({
       statusCode: 429,

@@ -12,7 +12,7 @@ const createUser = async (payload: Partial<IUser>) => {
     const { password, ...rest } = payload;
     const hashedPassword = await bcryptjs.hash(
       password as string,
-      Number(envVars.BCRYPT_SALT_ROUND)
+      Number(envVars.BCRYPT_SALT_ROUND),
     );
     const user = await User.create([{ ...rest, password: hashedPassword }], {
       session,
@@ -23,7 +23,7 @@ const createUser = async (payload: Partial<IUser>) => {
       {
         wallet: wallet[0]._id,
       },
-      { new: true, runValidators: true, session }
+      { new: true, runValidators: true, session },
     ).select("-password");
 
     // await OtpServices.sendOtp(payload?.email as string, payload.name as string);
@@ -58,4 +58,18 @@ const getMe = async (userId: string) => {
     data: user,
   };
 };
-export const UserServices = { createUser, getUsers, getAgents, getMe };
+// user profile
+const updateProfile = async (userId: string, payload: Partial<IUser>) => {
+  const user = await User.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+  return user;
+};
+export const UserServices = {
+  createUser,
+  getUsers,
+  getAgents,
+  getMe,
+  updateProfile,
+};

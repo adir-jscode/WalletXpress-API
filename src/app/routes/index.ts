@@ -1,10 +1,11 @@
 import { Router } from "express";
+import { adminRoutes } from "../modules/admin/admin.route";
+import { aiRoutes } from "../modules/ai/ai.route";
+import { authRoutes } from "../modules/auth/auth.route";
+import { OtpRoutes } from "../modules/Otp/otp.route";
+import { transactionRoutes } from "../modules/transaction/transaction.route";
 import { userRoutes } from "../modules/user/user.route";
 import { walletRoutes } from "../modules/wallet/wallet.route";
-import { authRoutes } from "../modules/auth/auth.route";
-import { transactionRoutes } from "../modules/transaction/transaction.route";
-import { adminRoutes } from "../modules/admin/admin.route";
-import { OtpRoutes } from "../modules/Otp/otp.route";
 
 export const router = Router();
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: "/transaction",
     route: transactionRoutes,
+  },
+  {
+    path: "/ai",
+    route: aiRoutes,
   },
 ];
 

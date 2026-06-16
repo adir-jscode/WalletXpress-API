@@ -14,7 +14,7 @@ const createUser = catchAsync(
       message: "User created successfully",
       data: user,
     });
-  }
+  },
 );
 
 const getMe = catchAsync(
@@ -23,11 +23,11 @@ const getMe = catchAsync(
     const result = await UserServices.getMe(decodedToken.id);
     sendResponse(res, {
       success: true,
-      statusCode: httpStatus.CREATED,
+      statusCode: httpStatus.OK,
       message: "Your profile Retrieved Successfully",
       data: result.data,
     });
-  }
+  },
 );
 
 const getUsers = catchAsync(
@@ -39,7 +39,7 @@ const getUsers = catchAsync(
       message: "All user retrived successfully",
       data: users,
     });
-  }
+  },
 );
 const getAgents = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +50,25 @@ const getAgents = catchAsync(
       message: "All agent retrived successfully",
       data: agents,
     });
-  }
+  },
+);
+const updateProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    const user = await UserServices.updateProfile(decodedToken.id, req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Profile updated successfully",
+      data: user,
+    });
+  },
 );
 
-export const userControllers = { createUser, getUsers, getAgents, getMe };
+export const userControllers = {
+  createUser,
+  getUsers,
+  getAgents,
+  getMe,
+  updateProfile,
+};
