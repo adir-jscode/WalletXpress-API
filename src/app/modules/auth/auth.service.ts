@@ -16,7 +16,7 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   const isUserExist = await User.findOne({ phone });
   const passwordMatched = await bcryptjs.compare(
     password as string,
-    isUserExist?.password as string
+    isUserExist?.password as string,
   );
   if (!isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid phone number");
@@ -27,7 +27,7 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   } else if (isUserExist.isActive !== IsActive.ACTIVE) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `The account is ${isUserExist.isActive}`
+      `The account is ${isUserExist.isActive}`,
     );
   } else if (!isUserExist.isVerified) {
     throw new AppError(httpStatus.BAD_REQUEST, "User is not verified");
@@ -41,7 +41,7 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   return {
     accessToken: userToken.accessToken,
     refreshToken: userToken.refreshToken,
-    user: rest,
+    role: rest.role,
   };
 };
 
@@ -53,7 +53,7 @@ const getNewAccessToken = async (refreshToken: string) => {
 const changePassword = async (
   decodedToken: JwtPayload,
   oldPassword: string,
-  newPassword: string
+  newPassword: string,
 ) => {
   const user = await User.findById(decodedToken.id);
   if (!user) {
@@ -61,14 +61,14 @@ const changePassword = async (
   }
   const passwordMatched = await bcryptjs.compare(
     oldPassword,
-    user?.password as string
+    user?.password as string,
   );
   if (!passwordMatched) {
     throw new AppError(httpStatus.BAD_REQUEST, "Old password is incorrect");
   }
   const hashNewPassword = await bcryptjs.hash(
     newPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
+    Number(envVars.BCRYPT_SALT_ROUND),
   );
   user.password = hashNewPassword;
   user.save();
@@ -81,7 +81,7 @@ const forgetPassword = async (email: string) => {
   } else if (isUserExist.isActive !== IsActive.ACTIVE) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `The account is ${isUserExist.isActive}`
+      `The account is ${isUserExist.isActive}`,
     );
   } else if (
     isUserExist.isDeleted === true ||
@@ -89,7 +89,7 @@ const forgetPassword = async (email: string) => {
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "account is deleted or not verified"
+      "account is deleted or not verified",
     );
   } else if (isUserExist.approvalStatus !== ApprovalStatus.APPROVED) {
     throw new AppError(httpStatus.BAD_REQUEST, "The Account is not approved");
@@ -118,12 +118,12 @@ const forgetPassword = async (email: string) => {
 
 const resetPassword = async (
   payload: Record<string, any>,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
 ) => {
   if (payload.id !== decodedToken.id) {
     throw new AppError(
       httpStatus.UNAUTHORIZED,
-      "You can not reset your password"
+      "You can not reset your password",
     );
   }
   const isUserExist = await User.findById(decodedToken.id);
@@ -132,7 +132,7 @@ const resetPassword = async (
   }
   const hashNewPassword = await bcryptjs.hash(
     payload.password,
-    Number(envVars.BCRYPT_SALT_ROUND)
+    Number(envVars.BCRYPT_SALT_ROUND),
   );
   isUserExist.password = hashNewPassword;
   await isUserExist.save();
