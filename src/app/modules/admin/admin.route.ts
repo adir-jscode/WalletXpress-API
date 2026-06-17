@@ -1,29 +1,26 @@
 import { Router } from "express";
-import { AdminControllers } from "./admin.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
-import { Role } from "../user/user.interface";
 import { validateRequest } from "../../middlewares/validateRequest";
+import { Role } from "../user/user.interface";
 import { updateWalletStatusZodSchema } from "../wallet/wallet.validation";
-import { updateApprovalStatusZodSchema } from "../user/user.validation";
+import { AdminControllers } from "./admin.controller";
 
 const router = Router();
-
-// router.patch(
-//   "/:id",
-//   checkAuth(Role.ADMIN),
-//   AdminControllers.changeUserWalletStatus
-// );
 
 router.patch(
   "/block-unblock/:id",
   validateRequest(updateWalletStatusZodSchema),
   checkAuth(Role.ADMIN),
-  AdminControllers.blockUnlockUserWallets
+  AdminControllers.blockUnlockUserWallets,
 );
 router.patch(
   "/approve-suspend/:id",
-  validateRequest(updateApprovalStatusZodSchema),
   checkAuth(Role.ADMIN),
-  AdminControllers.approveSuspendAgent
+  AdminControllers.approveSuspendAgent,
+);
+router.patch(
+  "/block-user/:id",
+  checkAuth(Role.ADMIN),
+  AdminControllers.blockUser,
 );
 export const adminRoutes = router;

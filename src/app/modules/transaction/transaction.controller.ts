@@ -6,15 +6,15 @@ import { TransactionServices } from "./transaction.service";
 const getTransactionHistory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const transactions = await TransactionServices.getTransactionHistory(
-      req.user
+      req.user,
     );
     sendResponse(res, {
       statusCode: 200,
       success: true,
-      message: "All transaction retrived",
+      message: "All transaction retrieved",
       data: transactions,
     });
-  }
+  },
 );
 
 const getAllTransaction = catchAsync(
@@ -26,10 +26,23 @@ const getAllTransaction = catchAsync(
       message: "All transaction retrived",
       data: transactions,
     });
-  }
+  },
+);
+const getUserTransaction = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user.id;
+    const transactions = await TransactionServices.getUserTransaction(userId);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "User transaction retrieved",
+      data: transactions,
+    });
+  },
 );
 
 export const TransactionControllers = {
   getTransactionHistory,
   getAllTransaction,
+  getUserTransaction,
 };

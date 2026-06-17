@@ -38,28 +38,47 @@ const blockUnlockUserWallets = async (userId: string, status: WalletStatus) => {
     {
       status: status,
     },
-    { new: true }
+    { new: true },
   );
   return updateUserWallet;
 };
 
-const approveSuspendAgent = async (
-  userId: string,
-  approvalStatus: ApprovalStatus
-) => {
+const approveSuspendAgent = async (userId: string) => {
   const isAgentExist = await User.findOne({ _id: userId, role: Role.AGENT });
   if (!isAgentExist) {
     throw new AppError(400, "Agent not found");
   }
+  let approvalStatus: ApprovalStatus;
+  if (isAgentExist.approvalStatus === ApprovalStatus.PENDING) {
+    approvalStatus = ApprovalStatus.APPROVED;
+  } else if (isAgentExist.approvalStatus === ApprovalStatus.APPROVED) {
+    approvalStatus = ApprovalStatus.SUSPENDED;
+  } else if (isAgentExist.approvalStatus === ApprovalStatus.SUSPENDED) {
+    approvalStatus = ApprovalStatus.APPROVED;
+  } else {
+    throw new AppError(400, "Invalid approval status");
+  }
   const updateAgent = await User.findByIdAndUpdate(
     userId,
     { approvalStatus: approvalStatus },
-    { new: true }
+    { new: true },
   );
   return updateAgent;
+};
+const blockUser = async (userId: string) => {
+  const userWallet = await User.findByIdAndUpdate(
+    userId,
+    { isActive: IsActive.BLOCKED },
+    { new: true },
+  );
+  if (!userWallet) {
+    throw new AppError(400, "User not found");
+  }
+  return userWallet;
 };
 
 export const AdminServices = {
   blockUnlockUserWallets,
   approveSuspendAgent,
+  blockUser,
 };

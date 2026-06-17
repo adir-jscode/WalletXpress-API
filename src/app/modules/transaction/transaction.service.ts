@@ -21,7 +21,7 @@ const getTransactionHistory = async (payload: JwtPayload) => {
   }).populate("initiator");
   //sort by createdAt descending
   transactionHistory.sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
   );
   return transactionHistory;
 };
@@ -30,8 +30,15 @@ const getAllTransaction = async () => {
   const transactions = await Transaction.find({}).populate("initiator");
   return transactions;
 };
+const getUserTransaction = async (userId: string) => {
+  const transactions = await Transaction.find({
+    $or: [{ initiator: userId }],
+  }).populate("initiator");
+  return transactions;
+};
 export const TransactionServices = {
   createTransaction,
   getTransactionHistory,
   getAllTransaction,
+  getUserTransaction,
 };

@@ -8,13 +8,18 @@ const router = Router();
 router.get(
   "/",
   checkAuth(Role.ADMIN),
-  TransactionControllers.getAllTransaction
+  TransactionControllers.getAllTransaction,
 );
 
 router.get(
   "/transaction-history",
   checkAuth(Role.USER, Role.AGENT),
-  TransactionControllers.getTransactionHistory
+  TransactionControllers.getTransactionHistory,
+);
+router.get(
+  "/transaction-history/user",
+  checkAuth(Role.USER),
+  TransactionControllers.getUserTransaction,
 );
 
 export const transactionRoutes = router;
