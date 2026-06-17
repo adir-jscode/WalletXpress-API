@@ -8,7 +8,7 @@ DigitalXpress enables users to register, manage wallets, and perform core financ
 
 ## 🌐 Live Deployment
 
-🔗 [Click to access the live API](https://wallet-xpress-api-v1.vercel.app/)
+🔗 [Click to access the live API](https://wallet-v2-tawny.vercel.app/)
 
 ## 📄Postman API Documentation
 

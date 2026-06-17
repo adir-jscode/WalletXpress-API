@@ -13,14 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
-const catchAsync_1 = require("../../utils/catchAsync");
-const auth_service_1 = require("./auth.service");
-const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const setCookie_1 = require("../../utils/setCookie");
-const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
-const jwt_1 = require("../../utils/jwt");
 const env_1 = require("../../config/env");
+const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
+const catchAsync_1 = require("../../utils/catchAsync");
+const jwt_1 = require("../../utils/jwt");
+const sendResponse_1 = require("../../utils/sendResponse");
+const setCookie_1 = require("../../utils/setCookie");
+const auth_service_1 = require("./auth.service");
 const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const loginInfo = yield auth_service_1.AuthServices.credentialsLogin(req.body);
     (0, setCookie_1.setAuthCookie)(res, loginInfo);
@@ -45,16 +45,16 @@ const getNewAccessToken = (0, catchAsync_1.catchAsync)((req, res, next) => __awa
         data: accessToken,
     });
 }));
-const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const logout = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
     });
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
     });
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
