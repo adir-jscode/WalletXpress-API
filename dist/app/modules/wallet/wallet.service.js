@@ -135,6 +135,14 @@ const sendMoneyToUser = (phone, amount, decodedToken) => __awaiter(void 0, void 
         if (user._id.toString() === decodedToken.id) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not allowed to add money");
         }
+        //check insufficient balance
+        const senderWallet = yield wallet_model_1.Wallet.findOne({ owner: decodedToken.id });
+        if (!senderWallet) {
+            throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "your wallet not found");
+        }
+        if (senderWallet.balance < amount) {
+            throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Insufficient balance");
+        }
         const decodedUserWallet = yield wallet_model_1.Wallet.findOneAndUpdate({
             owner: decodedToken.id,
             status: wallet_interface_1.WalletStatus.ACTIVE,

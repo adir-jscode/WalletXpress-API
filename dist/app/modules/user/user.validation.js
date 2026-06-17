@@ -78,7 +78,8 @@ exports.updateUserZodSchema = zod_1.default.object({
         .optional(),
     nid: zod_1.default
         .string({ error: "NID must be string" })
-        .max(10, { message: "NID must be at least 10 characters long" }),
+        .max(10, { message: "NID must be at least 10 characters long" })
+        .optional(),
     role: zod_1.default.enum(Object.values(user_interface_1.Role)).optional(),
     IsActive: zod_1.default.enum(Object.values(user_interface_1.IsActive)).optional(),
     isDeleted: zod_1.default.boolean({ error: "isDeleted must be true or false" }).optional(),

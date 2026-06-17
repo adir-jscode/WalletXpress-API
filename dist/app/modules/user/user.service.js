@@ -67,9 +67,25 @@ const getAgents = () => __awaiter(void 0, void 0, void 0, function* () {
     return agents;
 });
 const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findById(userId).select("-password");
+    const user = yield user_model_1.User.findById(userId)
+        .select("-password")
+        .populate("wallet");
     return {
         data: user,
     };
 });
-exports.UserServices = { createUser, getUsers, getAgents, getMe };
+// user profile
+const updateProfile = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findByIdAndUpdate(userId, payload, {
+        new: true,
+        runValidators: true,
+    }).select("-password");
+    return user;
+});
+exports.UserServices = {
+    createUser,
+    getUsers,
+    getAgents,
+    getMe,
+    updateProfile,
+};

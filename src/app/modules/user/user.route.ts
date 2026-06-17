@@ -18,7 +18,6 @@ router.get("/agents", checkAuth(Role.ADMIN), userControllers.getAgents);
 router.get("/me", checkAuth(...Object.values(Role)), userControllers.getMe);
 router.put(
   "/update-profile",
-
   validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)),
   userControllers.updateProfile,

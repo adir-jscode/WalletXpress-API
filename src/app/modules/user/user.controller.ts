@@ -55,6 +55,7 @@ const getAgents = catchAsync(
 const updateProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
+
     const user = await UserServices.updateProfile(decodedToken.id, req.body);
     sendResponse(res, {
       statusCode: httpStatus.OK,

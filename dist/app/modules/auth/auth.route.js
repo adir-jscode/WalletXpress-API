@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoutes = void 0;
 const express_1 = require("express");
-const auth_controller_1 = require("./auth.controller");
 const checkAuth_1 = require("../../middlewares/checkAuth");
-const user_interface_1 = require("../user/user.interface");
 const validateRequest_1 = require("../../middlewares/validateRequest");
+const user_interface_1 = require("../user/user.interface");
+const auth_controller_1 = require("./auth.controller");
 const auth_validation_1 = require("./auth.validation");
 const router = (0, express_1.Router)();
 router.post("/login", (0, validateRequest_1.validateRequest)(auth_validation_1.loginZodSchema), auth_controller_1.AuthControllers.credentialsLogin);

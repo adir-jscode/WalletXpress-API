@@ -22,8 +22,6 @@ const blockUnlockUserWallets = catchAsync(
 
 const approveSuspendAgent = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("params:", req.params);
-
     const updateStatus = await AdminServices.approveSuspendAgent(req.params.id);
     sendResponse(res, {
       statusCode: 200,
@@ -36,7 +34,7 @@ const approveSuspendAgent = catchAsync(
 const blockUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
-    console.log("Blocking user with ID:", userId);
+
     const updateStatus = await AdminServices.blockUser(userId);
     sendResponse(res, {
       statusCode: 200,

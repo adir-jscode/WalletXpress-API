@@ -50,15 +50,36 @@ const blockUnlockUserWallets = (userId, status) => __awaiter(void 0, void 0, voi
     }, { new: true });
     return updateUserWallet;
 });
-const approveSuspendAgent = (userId, approvalStatus) => __awaiter(void 0, void 0, void 0, function* () {
+const approveSuspendAgent = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const isAgentExist = yield user_model_1.User.findOne({ _id: userId, role: user_interface_1.Role.AGENT });
     if (!isAgentExist) {
         throw new AppError_1.default(400, "Agent not found");
     }
+    let approvalStatus;
+    if (isAgentExist.approvalStatus === user_interface_1.ApprovalStatus.PENDING) {
+        approvalStatus = user_interface_1.ApprovalStatus.APPROVED;
+    }
+    else if (isAgentExist.approvalStatus === user_interface_1.ApprovalStatus.APPROVED) {
+        approvalStatus = user_interface_1.ApprovalStatus.SUSPENDED;
+    }
+    else if (isAgentExist.approvalStatus === user_interface_1.ApprovalStatus.SUSPENDED) {
+        approvalStatus = user_interface_1.ApprovalStatus.APPROVED;
+    }
+    else {
+        throw new AppError_1.default(400, "Invalid approval status");
+    }
     const updateAgent = yield user_model_1.User.findByIdAndUpdate(userId, { approvalStatus: approvalStatus }, { new: true });
     return updateAgent;
+});
+const blockUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const userWallet = yield user_model_1.User.findByIdAndUpdate(userId, { isActive: user_interface_1.IsActive.BLOCKED }, { new: true });
+    if (!userWallet) {
+        throw new AppError_1.default(400, "User not found");
+    }
+    return userWallet;
 });
 exports.AdminServices = {
     blockUnlockUserWallets,
     approveSuspendAgent,
+    blockUser,
 };

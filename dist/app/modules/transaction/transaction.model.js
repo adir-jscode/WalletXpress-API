@@ -14,7 +14,6 @@ const transactionSchema = new mongoose_1.Schema({
     },
     amount: { type: Number, required: true },
     fee: { type: Number, default: 0 },
-    comission: { type: Number, default: 0 },
     status: {
         type: String,
         enum: Object.values(transaction_interface_1.TransactionStatus),

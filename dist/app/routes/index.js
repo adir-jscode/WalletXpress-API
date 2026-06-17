@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = require("express");
+const admin_route_1 = require("../modules/admin/admin.route");
+const ai_route_1 = require("../modules/ai/ai.route");
+const auth_route_1 = require("../modules/auth/auth.route");
+const otp_route_1 = require("../modules/Otp/otp.route");
+const transaction_route_1 = require("../modules/transaction/transaction.route");
 const user_route_1 = require("../modules/user/user.route");
 const wallet_route_1 = require("../modules/wallet/wallet.route");
-const auth_route_1 = require("../modules/auth/auth.route");
-const transaction_route_1 = require("../modules/transaction/transaction.route");
-const admin_route_1 = require("../modules/admin/admin.route");
-const otp_route_1 = require("../modules/Otp/otp.route");
 exports.router = (0, express_1.Router)();
 const moduleRoutes = [
     {
@@ -33,6 +34,10 @@ const moduleRoutes = [
     {
         path: "/transaction",
         route: transaction_route_1.transactionRoutes,
+    },
+    {
+        path: "/ai",
+        route: ai_route_1.aiRoutes,
     },
 ];
 moduleRoutes.forEach((route) => {

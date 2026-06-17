@@ -13,10 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const env_1 = require("./app/config/env");
 const app_1 = __importDefault(require("./app"));
+const env_1 = require("./app/config/env");
 const seedAdmin_1 = require("./app/utils/seedAdmin");
-const redis_config_1 = require("./app/config/redis.config");
 let server;
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,7 +30,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, redis_config_1.connectRedis)();
+    // await connectRedis();
     yield startServer();
     yield (0, seedAdmin_1.seedAdmin)();
 }))();

@@ -19,6 +19,6 @@ export interface ITransaction {
   type: TransactionType;
   amount: number;
   fee: number;
-  comission: number;
+  createdAt: Date;
   status: TransactionStatus;
 }

@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const env_1 = require("../config/env");
-const path_1 = __importDefault(require("path"));
 const ejs_1 = __importDefault(require("ejs"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const path_1 = __importDefault(require("path"));
+const env_1 = require("../config/env");
 const AppError_1 = __importDefault(require("../errorHelpers/AppError"));
 const transporter = nodemailer_1.default.createTransport({
     secure: true,

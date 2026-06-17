@@ -1,8 +1,8 @@
 import { Server as HttpServer } from "http";
-import { Server as SocketIOServer, Socket } from "socket.io";
+import { JwtPayload } from "jsonwebtoken";
+import { Socket, Server as SocketIOServer } from "socket.io";
 import { envVars } from "../config/env";
 import { verifyToken } from "../utils/jwt";
-import { JwtPayload } from "jsonwebtoken";
 
 // userId -> Set of socket ids (one user can have multiple tabs)
 const userSocketMap = new Map<string, Set<string>>();
@@ -12,10 +12,7 @@ let io: SocketIOServer;
 export const initSocket = (httpServer: HttpServer): SocketIOServer => {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: [
-        "http://localhost:5173",
-        envVars.FRONTEND_URL,
-      ],
+      origin: ["http://localhost:5173", envVars.FRONTEND_URL],
       credentials: true,
     },
   });
@@ -24,8 +21,7 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
   io.use((socket: Socket, next) => {
     try {
       const token =
-        socket.handshake.auth?.token ||
-        socket.handshake.headers?.authorization;
+        socket.handshake.auth?.token || socket.handshake.headers?.authorization;
 
       if (!token) {
         return next(new Error("Authentication token missing"));
@@ -33,7 +29,7 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
 
       const decoded = verifyToken(
         token,
-        envVars.JWT_ACCESS_SECRET
+        envVars.JWT_ACCESS_SECRET,
       ) as JwtPayload;
 
       // Attach decoded user to socket data for later use
@@ -54,10 +50,6 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
     }
     userSocketMap.get(userId)!.add(socket.id);
 
-    console.log(
-      `🔌 Socket connected | user: ${userId} | socket: ${socket.id}`
-    );
-
     socket.on("disconnect", () => {
       const sockets = userSocketMap.get(userId);
       if (sockets) {
@@ -66,9 +58,6 @@ export const initSocket = (httpServer: HttpServer): SocketIOServer => {
           userSocketMap.delete(userId);
         }
       }
-      console.log(
-        `🔌 Socket disconnected | user: ${userId} | socket: ${socket.id}`
-      );
     });
   });
 
@@ -89,7 +78,7 @@ export const getIO = (): SocketIOServer => {
 export const emitToUser = (
   userId: string,
   event: string,
-  payload: unknown
+  payload: unknown,
 ): void => {
   const io = getIO();
   const sockets = userSocketMap.get(userId);

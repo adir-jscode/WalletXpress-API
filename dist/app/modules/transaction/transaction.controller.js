@@ -18,7 +18,7 @@ const getTransactionHistory = (0, catchAsync_1.catchAsync)((req, res, next) => _
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: "All transaction retrived",
+        message: "All transaction retrieved",
         data: transactions,
     });
 }));
@@ -31,7 +31,18 @@ const getAllTransaction = (0, catchAsync_1.catchAsync)((req, res, next) => __awa
         data: transactions,
     });
 }));
+const getUserTransaction = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user.id;
+    const transactions = yield transaction_service_1.TransactionServices.getUserTransaction(userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: 200,
+        success: true,
+        message: "User transaction retrieved",
+        data: transactions,
+    });
+}));
 exports.TransactionControllers = {
     getTransactionHistory,
     getAllTransaction,
+    getUserTransaction,
 };

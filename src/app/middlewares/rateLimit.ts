@@ -16,7 +16,6 @@ export const rateLimitMiddleware = (
   next: NextFunction,
 ): void => {
   const ip = req.ip || req.socket.remoteAddress;
-  console.log(`Incoming request from IP: ${ip}`);
 
   if (!ip) {
     res.status(400).json({
@@ -50,9 +49,7 @@ export const rateLimitMiddleware = (
   }
 
   // Check limit
-  console.log(
-    `IP: ${ip}, Count: ${ipRequests[ip].count}, Elapsed: ${currentTime - ipRequests[ip].startTime}ms`,
-  );
+
   if (ipRequests[ip].count > maxRequests) {
     res.status(429).json({
       statusCode: 429,

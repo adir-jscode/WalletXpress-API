@@ -17,17 +17,17 @@ const transactionSchema = new Schema<ITransaction>(
     },
     amount: { type: Number, required: true },
     fee: { type: Number, default: 0 },
-    comission: { type: Number, default: 0 },
+
     status: {
       type: String,
       enum: Object.values(TransactionStatus),
       default: TransactionStatus.PENDING,
     },
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: true, versionKey: false },
 );
 
 export const Transaction = model<ITransaction>(
   "Transaction",
-  transactionSchema
+  transactionSchema,
 );

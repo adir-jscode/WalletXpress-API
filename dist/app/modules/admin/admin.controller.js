@@ -11,21 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminControllers = void 0;
 const catchAsync_1 = require("../../utils/catchAsync");
-const admin_service_1 = require("./admin.service");
 const sendResponse_1 = require("../../utils/sendResponse");
-// const changeUserWalletStatus = catchAsync(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     const updateStatus = await AdminServices.changeUserWalletStatus(
-//       req.params.id
-//     );
-//     sendResponse(res, {
-//       statusCode: 200,
-//       success: true,
-//       message: "Status updated successfully",
-//       data: updateStatus,
-//     });
-//   }
-// );
+const admin_service_1 = require("./admin.service");
 const blockUnlockUserWallets = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { status } = req.body;
     const userId = req.params.id;
@@ -38,16 +25,26 @@ const blockUnlockUserWallets = (0, catchAsync_1.catchAsync)((req, res, next) => 
     });
 }));
 const approveSuspendAgent = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { approvalStatus } = req.body;
-    const updateStatus = yield admin_service_1.AdminServices.approveSuspendAgent(req.params.id, approvalStatus);
+    const updateStatus = yield admin_service_1.AdminServices.approveSuspendAgent(req.params.id);
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: `Agent is ${approvalStatus} successfully`,
+        message: `Agent's status changed successfully`,
+        data: updateStatus,
+    });
+}));
+const blockUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.id;
+    const updateStatus = yield admin_service_1.AdminServices.blockUser(userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: 200,
+        success: true,
+        message: `User is blocked successfully`,
         data: updateStatus,
     });
 }));
 exports.AdminControllers = {
     blockUnlockUserWallets,
     approveSuspendAgent,
+    blockUser,
 };

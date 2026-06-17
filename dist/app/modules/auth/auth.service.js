@@ -60,7 +60,7 @@ const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function
     return {
         accessToken: userToken.accessToken,
         refreshToken: userToken.refreshToken,
-        user: rest,
+        role: rest.role,
     };
 });
 const getNewAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {

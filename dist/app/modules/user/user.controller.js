@@ -31,7 +31,7 @@ const getMe = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0,
     const result = yield user_service_1.UserServices.getMe(decodedToken.id);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
-        statusCode: http_status_codes_1.default.CREATED,
+        statusCode: http_status_codes_1.default.OK,
         message: "Your profile Retrieved Successfully",
         data: result.data,
     });
@@ -54,4 +54,20 @@ const getAgents = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(voi
         data: agents,
     });
 }));
-exports.userControllers = { createUser, getUsers, getAgents, getMe };
+const updateProfile = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const decodedToken = req.user;
+    const user = yield user_service_1.UserServices.updateProfile(decodedToken.id, req.body);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_codes_1.default.OK,
+        success: true,
+        message: "Profile updated successfully",
+        data: user,
+    });
+}));
+exports.userControllers = {
+    createUser,
+    getUsers,
+    getAgents,
+    getMe,
+    updateProfile,
+};

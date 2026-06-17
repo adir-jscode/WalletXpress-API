@@ -10,15 +10,8 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://digital-xpress-sigma.vercel.app",
-    ],
-    credentials: true,
-  }),
-);
+// Configure CORS to allow requests from the frontend for all routes
+app.use(cors({ origin: true, credentials: true }));
 
 app.use("/api/v1", router);
 app.get("/", (req: Request, res: Response) => {

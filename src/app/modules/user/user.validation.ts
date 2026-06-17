@@ -1,4 +1,4 @@
-import z, { object } from "zod";
+import z from "zod";
 import { ApprovalStatus, IsActive, Role } from "./user.interface";
 
 export const createUserZodSchema = z.object({
@@ -76,7 +76,8 @@ export const updateUserZodSchema = z.object({
     .optional(),
   nid: z
     .string({ error: "NID must be string" })
-    .max(10, { message: "NID must be at least 10 characters long" }),
+    .max(10, { message: "NID must be at least 10 characters long" })
+    .optional(),
   role: z.enum(Object.values(Role) as [string]).optional(),
   IsActive: z.enum(Object.values(IsActive) as [string]).optional(),
   isDeleted: z.boolean({ error: "isDeleted must be true or false" }).optional(),

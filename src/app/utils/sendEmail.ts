@@ -1,7 +1,7 @@
-import nodemailer from "nodemailer";
-import { envVars } from "../config/env";
-import path from "path";
 import ejs from "ejs";
+import nodemailer from "nodemailer";
+import path from "path";
+import { envVars } from "../config/env";
 import AppError from "../errorHelpers/AppError";
 const transporter = nodemailer.createTransport({
   secure: true,

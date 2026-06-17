@@ -12,4 +12,5 @@ router.post("/", (0, validateRequest_1.validateRequest)(user_validation_1.create
 router.get("/users", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN), user_controller_1.userControllers.getUsers);
 router.get("/agents", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN), user_controller_1.userControllers.getAgents);
 router.get("/me", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), user_controller_1.userControllers.getMe);
+router.put("/update-profile", (0, validateRequest_1.validateRequest)(user_validation_1.updateUserZodSchema), (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), user_controller_1.userControllers.updateProfile);
 exports.userRoutes = router;
